@@ -1,0 +1,7 @@
+{
+  "name": "Borrow A Life",
+  "description": "A marketplace to temporarily experience another person's lifestyle, routine, mindset, and daily schedule.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
