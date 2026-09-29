@@ -12,10 +12,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
   </head>
   <body class="bg-[#090a0f] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-white min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+      const initLIVORAChat = () => {
+        if (window.__n8nChatReady) return;
+        window.__n8nChatReady = true;
+
+        try {
+          createChat({
+            webhookUrl: 'https://vandana3011.app.n8n.cloud/webhook/f8d01049-574f-47c7-ba53-b5aecd0da240/chat',
+            showWelcomeScreen: false,
+            defaultLanguage: 'en',
+            initialMessages: [
+              'Hey. I’ve been waiting for someone ready to break their routine. I’m LIVORA. What’s the vibe today?'
+            ],
+            i18n: {
+              en: {
+                title: 'LIVORA',
+                subtitle: 'AI Lifestyle Companion',
+                footer: '',
+                getStarted: 'Chat with LIVORA',
+                inputPlaceholder: 'Ask LIVORA anything about routines...',
+                closeButtonTooltip: 'Close LIVORA',
+              },
+            },
+          });
+        } catch (err) {
+          console.error('Failed to initialize n8n chat widget:', err);
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLIVORAChat);
+      } else {
+        initLIVORAChat();
+      }
+    </script>
   </body>
 </html>
 

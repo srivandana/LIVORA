@@ -59,3 +59,59 @@
   animation: pulseSlow 8s ease-in-out infinite;
 }
 
+/* Official n8n Chat Theme for LIVORA */
+:root {
+  --chat--color-primary: #6366f1;
+  --chat--color--primary: #6366f1;
+  --chat--color-secondary: #818cf8;
+  --chat--color--secondary: #818cf8;
+  --chat--color-typing: #818cf8;
+  --chat--color--typing: #818cf8;
+  --chat--toggle--background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
+  --chat--toggle--hover--background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+  --chat--toggle--active--background: #4338ca;
+  --chat--toggle--color: #ffffff;
+  --chat--toggle--width: 56px;
+  --chat--toggle--height: 56px;
+  --chat--toggle--border-radius: 20px;
+  --chat--window--width: 410px;
+  --chat--window--height: 590px;
+  --chat--window--bottom: 24px;
+  --chat--window--right: 24px;
+  --chat--window--z-index: 99999;
+  --chat--window--border: 1px solid rgba(99, 102, 241, 0.35);
+  --chat--window--border-radius: 24px;
+  --chat--header--background: #0d0f1b;
+  --chat--header--color: #ffffff;
+  --chat--header--border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  --chat--body--background: #090a0f;
+  --chat--footer--background: #0d0f1b;
+  --chat--footer--border-top: 1px solid rgba(255, 255, 255, 0.08);
+  --chat--message--bot--background: #141726;
+  --chat--message--bot--color: #f1f5f9;
+  --chat--message--bot--border: 1px solid rgba(255, 255, 255, 0.08);
+  --chat--message--user--background: #6366f1;
+  --chat--message--user--color: #ffffff;
+  --chat--message--user--border: none;
+  --chat--input--background: #141726;
+  --chat--input--color: #ffffff;
+  --chat--font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.chat-window-wrapper .chat-window-toggle {
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5), 0 8px 10px -6px rgba(99, 102, 241, 0.4);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --chat--window--bottom: 76px;
+    --chat--window--right: 12px;
+    --chat--window--width: calc(100vw - 24px);
+    --chat--window--height: 72vh;
+    --chat--toggle--width: 52px;
+    --chat--toggle--height: 52px;
+    --chat--window--margin-bottom: 12px;
+  }
+}
+
+

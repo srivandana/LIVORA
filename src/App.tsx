@@ -12,7 +12,6 @@ import { RemixLifeModal } from './components/RemixLifeModal';
 import { ProfilePage } from './components/ProfilePage';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ShareModal } from './components/ShareModal';
-import { LivChatBot } from './components/LivChatBot';
 import {
   LifeExperience,
   ActiveLifeSession,
@@ -357,9 +356,6 @@ export default function App() {
           onClose={() => setLifeToShare(null)}
         />
       )}
-
-      {/* Floating AI Assistant LIV (n8n integration) */}
-      <LivChatBot />
     </div>
   );
 }
