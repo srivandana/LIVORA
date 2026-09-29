@@ -217,6 +217,128 @@ Return ONLY the raw JSON object without markdown fences or additional commentary
   }
 });
 
+// LIV AI Chatbot Webhook Proxy for n8n
+const N8N_LIV_WEBHOOK_URL =
+  process.env.LIV_WEBHOOK_URL ||
+  'https://vandana3011.app.n8n.cloud/webhook/f8d01049-574f-47c7-ba53-b5aecd0da240/chat';
+
+app.get('/api/liv-chat/status', async (req, res) => {
+  try {
+    const response = await fetch(N8N_LIV_WEBHOOK_URL, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    const data = await response.json().catch(() => null);
+    if (response.status === 404 && data?.hint?.includes('must be active')) {
+      return res.json({
+        active: false,
+        status: 404,
+        message: 'n8n workflow is currently inactive.',
+        hint: data.hint,
+        webhookUrl: N8N_LIV_WEBHOOK_URL,
+      });
+    }
+
+    return res.json({
+      active: response.ok,
+      status: response.status,
+      webhookUrl: N8N_LIV_WEBHOOK_URL,
+    });
+  } catch (error: any) {
+    return res.json({
+      active: false,
+      error: error?.message,
+      webhookUrl: N8N_LIV_WEBHOOK_URL,
+    });
+  }
+});
+
+app.post('/api/liv-chat/message', async (req, res) => {
+  const { chatInput, sessionId, metadata } = req.body;
+
+  if (!chatInput || typeof chatInput !== 'string') {
+    return res.status(400).json({ error: 'chatInput is required' });
+  }
+
+  const payload = {
+    action: 'sendMessage',
+    sessionId: sessionId || `liv_session_${Date.now()}`,
+    chatInput,
+    metadata: metadata || { source: 'livora-web' },
+  };
+
+  try {
+    const n8nResponse = await fetch(N8N_LIV_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const contentType = n8nResponse.headers.get('content-type') || '';
+
+    if (!n8nResponse.ok) {
+      const errData = await n8nResponse.json().catch(() => null);
+      if (n8nResponse.status === 404 && errData?.hint?.includes('must be active')) {
+        return res.status(200).json({
+          success: false,
+          isWorkflowInactive: true,
+          error: 'Your n8n workflow must be toggled "Active" in the top-right of your n8n editor canvas for production webhook calls.',
+          hint: errData.hint,
+        });
+      }
+      return res.status(n8nResponse.status).json({
+        success: false,
+        error: errData?.message || `n8n webhook error: ${n8nResponse.statusText}`,
+      });
+    }
+
+    if (contentType.includes('application/json')) {
+      const json = await n8nResponse.json();
+      // Handle standard n8n outputs: { output: string }, { text: string }, or array of items
+      let replyText = '';
+      if (typeof json === 'string') {
+        replyText = json;
+      } else if (json.output) {
+        replyText = typeof json.output === 'string' ? json.output : JSON.stringify(json.output);
+      } else if (json.text) {
+        replyText = typeof json.text === 'string' ? json.text : JSON.stringify(json.text);
+      } else if (json.message) {
+        replyText = typeof json.message === 'string' ? json.message : JSON.stringify(json.message);
+      } else if (Array.isArray(json) && json[0]) {
+        replyText = json[0].output || json[0].text || json[0].message || JSON.stringify(json[0]);
+      } else {
+        replyText = JSON.stringify(json);
+      }
+
+      return res.json({
+        success: true,
+        reply: replyText,
+        raw: json,
+        sessionId: payload.sessionId,
+      });
+    } else {
+      const text = await n8nResponse.text();
+      return res.json({
+        success: true,
+        reply: text,
+        sessionId: payload.sessionId,
+      });
+    }
+  } catch (error: any) {
+    console.error('Error forwarding to LIV n8n webhook:', error);
+    return res.status(502).json({
+      success: false,
+      error: 'Unable to connect to LIV n8n webhook server: ' + error?.message,
+    });
+  }
+});
+
 // Setup Vite middleware in dev or static files in production
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
